@@ -12,6 +12,8 @@ app.use(express.json()); // Convert body of request into JSON
 app.use(cors()); // Secruity measure to prevent cross-origin requests
 
 // Routes
+
+// Search for recipes from the API
 app.get("/api/recipes/search", async (req, res) => {
   const searchTerm = req.query.searchTerm as string; // Get the search term from the query string
   const page = req.query.page as string; // Get the page from the query string
@@ -19,7 +21,7 @@ app.get("/api/recipes/search", async (req, res) => {
 
   return res.json(results); // Return the results as JSON
 });
-
+// Get recipe summary from the API
 app.get("/api/recipes/:id/summary", async (req, res) => {
   const id = req.params.id; // Get the recipe ID from the URL
   const summary = await RecipeAPI.getRecipeSummary(id);
@@ -27,6 +29,7 @@ app.get("/api/recipes/:id/summary", async (req, res) => {
   return res.json(summary); // Return the summary as JSON
 });
 
+// Create favourite recipe in the database
 app.post("/api/recipes/favourite", async (req, res) => {
   const recipeId = req.body.recipeId; // Get the recipe ID from the request body
   try {
@@ -43,6 +46,7 @@ app.post("/api/recipes/favourite", async (req, res) => {
   }
 });
 
+// Get all favourite recipes from the database
 app.get("/api/recipes/favourite", async (req, res) => {
   try {
     const recipes = await prismaClient.favouriteRecipes.findMany(); // Get all favourite recipes from the database
@@ -53,6 +57,23 @@ app.get("/api/recipes/favourite", async (req, res) => {
   } catch (e) {
     console.log(e);
     return res.status(500).json({ error: "Failed to get favourite recipes" });
+  }
+});
+
+// Delete favourite recipe from the database
+app.delete("/api/recipes/favourite", async (req, res) => {
+  const recipeId = req.body.recipeId;
+  try {
+    await prismaClient.favouriteRecipes.delete({
+      where: {
+        recipeId: recipeId,
+      },
+    }); // Delete the favourite recipe from the database based on the recipeId
+
+    return res.status(204).send(); // Return 204 status code for new content
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({ error: "Failed to delete favourite recipe" });
   }
 });
 
