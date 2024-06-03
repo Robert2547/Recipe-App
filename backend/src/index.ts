@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import * as RecipeAPI from "./recipe-api";
-require('dotenv').config();
+require("dotenv").config();
 
 const app = express();
 
@@ -16,6 +16,13 @@ app.get("/api/recipes/search", async (req, res) => {
   const results = await RecipeAPI.searchRecipes(searchTerm, parseInt(page));
 
   return res.json(results); // Return the results as JSON
+});
+
+app.get("/api/recipes/:id/summary", async (req, res) => {
+  const id = req.params.id; // Get the recipe ID from the URL
+  const summary = await RecipeAPI.getRecipeSummary(id);
+
+  return res.json(summary); // Return the summary as JSON
 });
 
 // Start the server on port 5001

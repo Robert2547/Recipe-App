@@ -11,3 +11,16 @@ export const searchRecipes = async (searchTerm: string, page: number) => {
   }
   return response.json();
 };
+
+export const getRecipeSummary = async (id: string) => {
+  const url = new URL(`http://localhost:5001/api/recipes/${id}/summary`);
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(
+      "Failed to fetch recipe summary during getRecipeSummary: " +
+        response.statusText
+    );
+  }
+
+  return response.json();
+};
