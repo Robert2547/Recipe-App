@@ -55,7 +55,7 @@ const App = () => {
 
       {/* Render the RecipeModal component only if there is a selected recipe */}
       {selectedRecipe ? (
-        <RecipeModal recipeId={selectedRecipe.id.toString()} />
+        <RecipeModal recipeId={selectedRecipe.id.toString()} onClose={() => setSelectedRecipe(null)} />
       ) : null}
     </div>
   );
