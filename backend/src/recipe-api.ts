@@ -47,3 +47,18 @@ export const getRecipeSummary = async (id: string) => {
     console.error("Error getting recipe summary: ", error);
   }
 };
+
+export const getFavouriteRecipesByIDS = async (ids: string[]) => {
+  const url = new URL("https://api.spoonacular.com/recipes/informationBulk");
+  if (!process.env.API_KEY) throw new Error("API key is missing!");
+  const params = {
+    apiKey: process.env.API_KEY,
+    ids: ids.join(","), //Convert array into a string and separate with commas
+  };
+
+  url.search = new URLSearchParams(params).toString();
+
+  const searchResponse = await fetch(url);
+  const json = await searchResponse.json();
+  return { results: json };
+};
