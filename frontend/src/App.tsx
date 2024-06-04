@@ -16,7 +16,20 @@ const App = () => {
 
   const addFavouriteRecipe = async (recipe: Recipe) => {
     try {
-      await api.addFavouriteRecipes(recipe);
+      await api.addFavouriteRecipe(recipe);
+      setFavouriteRecipes([...favouriteRecipes, recipe]); // ... copies the current array, then we add the new recipe to the end
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const removeFavouriteRecipe = async (recipe: Recipe) => {
+    try {
+      await api.removeFavouriteRecipe(recipe);
+      const updatedRecipes = favouriteRecipes.filter(
+        (favRecipe) => recipe.id !== favRecipe.id
+      ); // Return the new array without the removed recipe
+      setFavouriteRecipes(updatedRecipes); // Update the state with the new array
     } catch (error) {
       console.error(error);
     }
@@ -76,12 +89,22 @@ const App = () => {
             ></input>
             <button type="submit">Submit</button>
           </form>
-          {recipes.map((recipe) => (
-            <RecipeCard
-              recipe={recipe}
-              onClick={() => setSelectedRecipe(recipe)}
-            />
-          ))}
+          {recipes.map((recipe) => {
+            const isFavourite = favouriteRecipes.some(
+              (favRecipe) => recipe.id === favRecipe.id
+            ); // Check if the recipe is in the favourite recipes array
+
+            return (
+              <RecipeCard
+                recipe={recipe}
+                onClick={() => setSelectedRecipe(recipe)}
+                onFavouriteButtonClick={
+                  isFavourite ? removeFavouriteRecipe : addFavouriteRecipe
+                }
+                isFavourite={isFavourite}
+              />
+            );
+          })}
 
           <button className="view-more-button" onClick={handleViewMoreClick}>
             View More
@@ -95,6 +118,8 @@ const App = () => {
             <RecipeCard
               recipe={recipe}
               onClick={() => setSelectedRecipe(recipe)}
+              onFavouriteButtonClick={removeFavouriteRecipe}
+              isFavourite={true}
             />
           ))}
         </div>
